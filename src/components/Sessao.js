@@ -74,6 +74,11 @@ export default function Sessao(props) {
                     <Link to="/sucesso">
                         <button onClick={() => {
                             callback(selectedSeats, nome, CPF)
+                            axios.post("https://mock-api.driven.com.br/api/v5/cineflex/seats/book-many", {
+                                ids: [seats],
+                                name: {nome},
+                                cpf: {CPF},
+                            })
                         }}>Reservar assento(s)</button>
                     </Link>
                 </div>
