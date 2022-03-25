@@ -1,9 +1,10 @@
+import Footer from "./Footer";
 import React from "react";
 import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 
 export default function Filme(props) {
-    const {callback} = props;
+    const { callback, poster, movie} = props;
     const { idFilme } = useParams();
     const [sessions, setSessions] = React.useState([])
 
@@ -16,33 +17,37 @@ export default function Filme(props) {
     }, [])
 
     return (
-        <main>
-            <h2>Selecione o horário</h2>
+        <>
+            <main>
+                <h2>Selecione o horário</h2>
 
-            {
-                sessions.map(session => {
-                    const {weekday, date, showtimes} = session;
+                {
+                    sessions.map(session => {
+                        const { weekday, date, showtimes } = session;
 
-                    return (
-                        <div className="session" key={session.id}>
-                            <h3>{weekday} - {date}</h3>
+                        return (
+                            <div className="session" key={session.id}>
+                                <h3>{weekday} - {date}</h3>
                                 {
-                                showtimes.map(showtime => {
-                                    const {id, name} = showtime
-                                    return (
-                                        <Link to={`/sessao/${id}`} key={id}>
-                                            <button onClick={() => {
-                                                callback(date, name);
-                                            }}>{name}</button>
-                                        </Link>
-                                    )
-                                })
+                                    showtimes.map(showtime => {
+                                        const { id, name } = showtime
+                                        return (
+                                            <Link to={`/sessao/${id}`} key={id}>
+                                                <button onClick={() => {
+                                                    callback(weekday, date, name);
+                                                }}>{name}</button>
+                                            </Link>
+                                        )
+                                    })
                                 }
-                        </div>
-                    )
-                })
-            }
+                            </div>
+                        )
+                    })
+                }
 
-        </main>
+            </main>
+
+            <Footer poster={poster} movie={movie}/>
+        </>
     )
 }

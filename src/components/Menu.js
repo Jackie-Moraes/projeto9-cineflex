@@ -26,7 +26,7 @@ export default function Menu(props) {
                             <div className="movie" key={id}>
                                 <Link to={`/filme/${id}`}>
                                     <img src={posterURL} alt={`Poster do filme ${title}`} onClick={() => 
-                                        callback(title)
+                                        callback(title, posterURL)
                                         }/>
                                 </Link>
                             </div>
