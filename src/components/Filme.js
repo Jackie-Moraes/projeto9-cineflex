@@ -2,7 +2,8 @@ import React from "react";
 import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 
-export default function Filme() {
+export default function Filme(props) {
+    const {callback} = props;
     const { idFilme } = useParams();
     const [sessions, setSessions] = React.useState([])
 
@@ -13,6 +14,8 @@ export default function Filme() {
             setSessions(answer.data.days)
         })
     }, [])
+
+    console.log(sessions)
 
     return (
         <main>
@@ -27,9 +30,12 @@ export default function Filme() {
                             <h3>{weekday} - {date}</h3>
                                 {
                                 showtimes.map(showtime => {
+                                    const {id, name} = showtime
                                     return (
-                                        <Link to={`/sessao/${showtime.id}`} key={showtime.id}>
-                                            <button>{showtime.name}</button>
+                                        <Link to={`/sessao/${id}`} key={id}>
+                                            <button onClick={() => {
+                                                callback(date, name);
+                                            }}>{name}</button>
                                         </Link>
                                     )
                                 })

@@ -2,7 +2,8 @@ import React from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 
-export default function Menu() {
+export default function Menu(props) {
+    const {callback} = props;
     const [movies, setMovies] = React.useState([])
 
     React.useEffect(() => {
@@ -20,10 +21,13 @@ export default function Menu() {
             <section className="movies">
                 {
                     movies.map(movie => {
+                        const {id, posterURL, title} = movie;
                         return (
-                            <div className="movie" key={movie.id}>
-                                <Link to={`/filme/${movie.id}`}>
-                                    <img src={movie.posterURL} alt={`Poster do filme ${movie.title}`} />
+                            <div className="movie" key={id}>
+                                <Link to={`/filme/${id}`}>
+                                    <img src={posterURL} alt={`Poster do filme ${title}`} onClick={() => 
+                                        callback(title)
+                                        }/>
                                 </Link>
                             </div>
                         )

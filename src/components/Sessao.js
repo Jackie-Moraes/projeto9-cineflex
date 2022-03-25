@@ -2,9 +2,15 @@ import React from "react";
 import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 
-export default function Sessao() {
+
+let selectedSeats = [];
+
+export default function Sessao(props) {
+    const {callback} = props;
     const {idShowtime} = useParams();
     const [seats, setSeats] = React.useState([]);
+    const [nome, setNome] = React.useState("");
+    const [CPF, setCPF] = React.useState("");
 
     React.useEffect(() => {
         const promise = axios.get(`https://mock-api.driven.com.br/api/v5/cineflex/showtimes/${idShowtime}/seats`)
@@ -12,9 +18,11 @@ export default function Sessao() {
         promise.then(answer => {
             setSeats(answer.data.seats)
         })
-    }, [])
+    }, []);
 
-    console.log(seats)
+    function selectSeats(seatNum) {
+        selectedSeats = [...selectedSeats, seatNum]
+    }
 
     return (
         <main>
@@ -23,9 +31,11 @@ export default function Sessao() {
             <div className="seats">
                 {
                     seats.map(seat => {
-                        const {isAvailable:open} = seat;
+                        const {isAvailable:open, id, name} = seat;
                         return (
-                            <button key={seat.id} className={open ? "" : "unavailable"}>{seat.name < 10 ? "0" : ""}{seat.name}</button>
+                            <button key={id} className={open ? "" : "unavailable"} onClick={open ? () => {
+                                selectSeats(name);
+                            } : null}>{name < 10 ? `0${name}` : name}</button>
                         )
                     })
                 }
@@ -50,14 +60,20 @@ export default function Sessao() {
 
             <section className="customer">
                 <h3>Nome do comprador:</h3>
-                <input placeholder="Digite seu nome..."></input>
+                <input placeholder="Digite seu nome..." onChange={(e) => {
+                    setNome(e.target.value)
+                }}></input>
                 <h3>CPF do comprador:</h3>
-                <input placeholder="Digite seu CPF..."></input>
+                <input placeholder="Digite seu CPF..." onChange={(e) => {
+                    setCPF(e.target.value)
+                }}></input>
             </section>
 
             <div className="finish">
                 <Link to="/sucesso">
-                    <button>Reservar assento(s)</button>
+                    <button onClick={() => {
+                        callback(selectedSeats, nome, CPF)
+                    }}>Reservar assento(s)</button>
                 </Link>
             </div>
         </main>
