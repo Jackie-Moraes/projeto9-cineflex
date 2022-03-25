@@ -1,16 +1,19 @@
 import Footer from "./Footer";
 import React from "react";
-import { Link, useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 let selectedSeats = [];
+let seatsID = [];
 
 export default function Sessao(props) {
-    const {callback, poster, movie, weekday, hour} = props;
+    const { callback, poster, movie, weekday, hour } = props;
     const { idShowtime } = useParams();
     const [seats, setSeats] = React.useState([]);
     const [nome, setNome] = React.useState("");
     const [CPF, setCPF] = React.useState("");
+
+    const navigate = useNavigate();
 
     React.useEffect(() => {
         const promise = axios.get(`https://mock-api.driven.com.br/api/v5/cineflex/showtimes/${idShowtime}/seats`)
@@ -20,8 +23,24 @@ export default function Sessao(props) {
         })
     }, []);
 
-    function selectSeats(seatNum) {
+    function selectSeats(seatNum, seatID) {
         selectedSeats = [...selectedSeats, seatNum]
+        seatsID = [...seatsID, seatID]
+    }
+
+    function sendData(event) {
+        event.preventDefault();
+
+        const promise = axios.post("https://mock-api.driven.com.br/api/v5/cineflex/seats/book-many", {
+            ids: seatsID,
+            name: nome,
+            cpf: CPF
+        });
+
+        promise.then(response => {
+            navigate("/sucesso")
+        })
+        promise.catch(console.log(promise))
     }
 
     return (
@@ -35,7 +54,7 @@ export default function Sessao(props) {
                             const { isAvailable: open, id, name } = seat;
                             return (
                                 <button key={id} className={open ? "" : "unavailable"} onClick={open ? () => {
-                                    selectSeats(name);
+                                    selectSeats(name, id);
                                 } : null}>{name < 10 ? `0${name}` : name}</button>
                             )
                         })
@@ -59,32 +78,28 @@ export default function Sessao(props) {
                     </div>
                 </section>
 
-                <section className="customer">
-                    <h3>Nome do comprador:</h3>
-                    <input placeholder="Digite seu nome..." onChange={(e) => {
-                        setNome(e.target.value)
-                    }} value={nome}></input>
-                    <h3>CPF do comprador:</h3>
-                    <input placeholder="Digite seu CPF..." onChange={(e) => {
-                        setCPF(e.target.value)
-                    }} value={CPF}></input>
-                </section>
+                <form onSubmit={sendData}>
+                    <section className="customer">
 
-                <div className="finish">
-                    <Link to="/sucesso">
-                        <button onClick={() => {
+                        <h3>Nome do comprador:</h3>
+                        <input placeholder="Digite seu nome..." onChange={(e) => {
+                            setNome(e.target.value)
+                        }} value={nome} required></input>
+                        <h3>CPF do comprador:</h3>
+                        <input placeholder="Digite seu CPF..." onChange={(e) => {
+                            setCPF(e.target.value)
+                        }} value={CPF} required></input>
+                    </section>
+
+                    <div className="finish">
+                        <button type="submit" onClick={() => {
                             callback(selectedSeats, nome, CPF)
-                            axios.post("https://mock-api.driven.com.br/api/v5/cineflex/seats/book-many", {
-                                ids: [seats],
-                                name: {nome},
-                                cpf: {CPF},
-                            })
                         }}>Reservar assento(s)</button>
-                    </Link>
-                </div>
+                    </div>
+                </form>
             </main>
 
-            <Footer poster={poster} movie={movie} weekday={weekday} hour={hour}/>
+            <Footer poster={poster} movie={movie} weekday={weekday} hour={hour} />
         </>
     )
 }
