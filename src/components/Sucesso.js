@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 
 export default function Sucesso(props) {
     const {movie, date, hour, seats, name, cpf} = props
-    console.log(seats);
 
     return (
         <main>
