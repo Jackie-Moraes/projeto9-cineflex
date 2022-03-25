@@ -13,8 +13,6 @@ export default function Menu() {
         })
     }, [])
 
-    console.log(movies)
-
 
     return (
         <main>

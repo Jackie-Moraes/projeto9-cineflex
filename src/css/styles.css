@@ -126,6 +126,11 @@ main h2 {
     background: #8DD7CF;
 }
 
+.seats .unavailable {
+    background: #FBE192;
+    border-color: #F7C52B;
+}
+
 .example .unavailable {
     background: #FBE192;
     border-color: #F7C52B;

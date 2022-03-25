@@ -14,8 +14,6 @@ export default function Filme() {
         })
     }, [])
 
-    console.log(sessions)
-
     return (
         <main>
             <h2>Selecione o horário</h2>
